@@ -1,5 +1,6 @@
 import User from '../models/user.model.js'
 import bcrypt from 'bcrypt'
+import jwt from "jsonwebtoken"
 
 export const register = async (req, res) => {
     try {
@@ -32,5 +33,38 @@ export const register = async (req, res) => {
     } catch (error) {
         console.error("error al registrar un usuario", error)
         return res.status(500).json({error: "error interno del servidor al intentar registrar un usuario"})
+    }
+};
+
+export const login = async (req, res) => {
+    try {
+        const {email, password_hash} = req.body
+        if (!email || !password_hash) {
+            return res.status(400).json({error: "Ambos campos son requeridos"})
+        }
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({error: "credenciales invalidas"})
+        }
+        const isMatch = await bcrypt.compare(password_hash, user.password_hash )
+        if (!isMatch) {
+            return res.status(400).json({error: "contraseña incorrecta"})
+        }
+        const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET,{
+            expiresIn: "1h"
+        })
+
+        const userResponse = user.toObject()
+        delete userResponse.password_hash
+
+        res.json({
+            token,
+            user: userResponse
+        })  
+
+        res.status(201).json({message: "session inciada con exito"})
+    } catch (error) {
+        console.error("error al iniciar sesion", error)
+        return res. status(500).json({error: "error interno del servidor al iniciar sesion"})
     }
 }
