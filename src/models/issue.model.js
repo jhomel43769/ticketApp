@@ -27,6 +27,45 @@ const issueSchema = new mongoose.Schema({
 
     project: {
         type: Schema.Types.ObjectId,
-        ref: 'Proyect'
-    }
+        ref: 'Project',
+        required: true
+    },
+    reportedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    assignedTo: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    //---Relacion embebida
+    comments: [{
+        user: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+        text: {type: String, required: true},
+        createdAt: {type: Date, default: Date.now}
+    }],
+    //---archivos adjuntos
+    fileName: [{
+        fileName: String,
+        fileUrl: String,
+        mimeType:String,
+        uploadedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+        uploadedAt: { type: Date, default: Date.now }    
+    }],
+    createdAt: {
+        type: Date,
+        default: Date.now
+  },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+  }
+});
+
+issueSchema.pre('save', function(next) {
+    this.updatedAt = Data.now();
+    next()
 })
+
+export const Issue = mongoose.model('Issue', issueSchema)
