@@ -60,6 +60,21 @@ export const login = async (req, res) => {
         res.status(201).json({message: "session inciada con exito"}, token, {user: userResponse})
     } catch (error) {
         console.error("error al iniciar sesion", error)
-        return res. status(500).json({error: "error interno del servidor al iniciar sesion"})
+        return res.status(500).json({error: "error interno del servidor al iniciar sesion"})
+    }
+};
+
+export const getProfiles = async (req, res) => {
+    try {
+        const users = await User.find({})
+
+        if(!users) {
+            return res.status(400).json({error: "no se encuentran usuarios"})
+        }
+
+        res.status(200).json({users})
+    } catch (error) {
+        console.error("error al obtener los usuarios")
+        return res.status(500).json({error: "error interno del servidor al obtener los usuarios"})
     }
 }
