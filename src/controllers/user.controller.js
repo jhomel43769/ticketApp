@@ -57,12 +57,7 @@ export const login = async (req, res) => {
         const userResponse = user.toObject()
         delete userResponse.password_hash
 
-        res.json({
-            token,
-            user: userResponse
-        })  
-
-        res.status(201).json({message: "session inciada con exito"})
+        res.status(201).json({message: "session inciada con exito"}, token, {user: userResponse})
     } catch (error) {
         console.error("error al iniciar sesion", error)
         return res. status(500).json({error: "error interno del servidor al iniciar sesion"})
