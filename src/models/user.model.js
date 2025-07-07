@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    firtName: {
+    firstName: {
         type: String,
         required: true
     },
@@ -41,4 +41,5 @@ userSchema.pre('save', function(next) {
     next()
 } )
 
-export const User = mongoose.model('User', userSchema)
+const User = mongoose.model('User', userSchema)
+export default User
