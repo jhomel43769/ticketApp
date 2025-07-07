@@ -27,17 +27,17 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     createdAt:{
-        type: Data,
-        default: data.now
+        type: Date,
+        default: Date.now
     },
     updatedAt: {
-        type: Data,
-        default: Data.now
+        type: Date,
+        default: Date.now
     }
 })
 
 userSchema.pre('save', function(next) {
-    this.updatedAt = Data.now()
+    this.updatedAt = Date.now()
     next()
 } )
 

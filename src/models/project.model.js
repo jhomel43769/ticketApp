@@ -11,8 +11,8 @@ const projectSchema = new mongoose.Schema({
         required: true
     },
     createdAt: {
-        type: Data,
-        default: Data.now
+        type: Date,
+        default: Date.now
     },
     createdByUserId: {
         type: Schema.Types.ObjectId,
@@ -24,12 +24,12 @@ const projectSchema = new mongoose.Schema({
         ref: 'User'
     },
         createdAt:{
-        type: Data,
-        default: data.now
+        type: Date,
+        default: Date.now
     },
     updatedAt: {
-        type: Data,
-        default: Data.now
+        type: Date,
+        default: Date.now
     },
     status: {
         type: String,
@@ -38,7 +38,7 @@ const projectSchema = new mongoose.Schema({
 })
 
 projectSchema.pre('save', function(next) {
-    this.updatedAt = Data.now()
+    this.updatedAt = Date.now()
     next()
 } )
 

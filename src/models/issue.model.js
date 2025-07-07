@@ -64,7 +64,7 @@ const issueSchema = new mongoose.Schema({
 });
 
 issueSchema.pre('save', function(next) {
-    this.updatedAt = Data.now();
+    this.updatedAt = Date.now();
     next()
 })
 
