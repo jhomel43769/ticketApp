@@ -10,13 +10,8 @@ const projectSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
     createdByUserId: {
         type: Schema.Types.ObjectId,
-        unique:true,
         required: true
     },
     leaders: {
@@ -33,7 +28,7 @@ const projectSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['avtivo', 'archivado','completado']
+        enum: ['activado', 'archivado','completado']
     }
 })
 

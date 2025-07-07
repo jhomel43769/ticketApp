@@ -11,7 +11,7 @@ const roleSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    createdAtL: {
+    createdAt: {
         type: Date,
         default: Date.now
     },
@@ -34,5 +34,5 @@ roleSchema.pre('save', function(next) {
   next();
 });
 
-export const Role = mongoose.model('Role', roleSchema);
+export const Roles = mongoose.model('Roles', roleSchema);
 

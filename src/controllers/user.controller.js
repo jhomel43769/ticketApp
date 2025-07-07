@@ -1,3 +1,3 @@
 import User from '../models/user.model.js'
-import Role from '../models/roles.mode.js'
+import Roles from '../models/roles.model.js'
 import bcrypt from 'bcrypt'
