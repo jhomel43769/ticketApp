@@ -74,7 +74,22 @@ export const getProfiles = async (req, res) => {
 
         res.status(200).json({users})
     } catch (error) {
-        console.error("error al obtener los usuarios")
+        console.error("error al obtener los usuarios", error)
         return res.status(500).json({error: "error interno del servidor al obtener los usuarios"})
+    }
+};
+
+export const getProfileById = async (req, res) => {
+    try {
+        const {_id} = req.params;
+        const user = await User.findById(_id)
+
+        if(!user) {
+            return res.status(400).json({error: "el usuario que intenta buscar no existe"})
+        }
+        res.status(200).json({user})
+    } catch (error) {
+        console.error("error al ontener el usuario", error)
+        return res.status(500).json({error: "error interno del servidor al obtejer el usuario"})
     }
 }
