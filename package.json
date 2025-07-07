@@ -1,0 +1,22 @@
+{
+  "name": "ticketapp",
+  "version": "1.0.0",
+  "description": "Aplicación de gestion de tareas por ticketes ",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --env-file=.env src/index.js",
+    "start": "node --env-file=.env src/index.js"
+  },
+  "author": "Jhomel Medina",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.10"
+  }
+}
