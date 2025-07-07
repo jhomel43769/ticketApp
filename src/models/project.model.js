@@ -1,6 +1,6 @@
 import mongoose, { model, Schema } from "mongoose";
 
-const proyectSchema = new mongoose.Schema({
+const projectSchema = new mongoose.Schema({
     name: {
         type: String,
         unique: true,
@@ -37,9 +37,9 @@ const proyectSchema = new mongoose.Schema({
     }
 })
 
-proyectSchema.pre('save', function(next) {
+projectSchema.pre('save', function(next) {
     this.updatedAt = Data.now()
     next()
 } )
 
-export const Proyect = mongoose.model('Proyect', proyectSchema)
+export const Project = mongoose.model('Project', projectSchema)
