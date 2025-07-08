@@ -10,7 +10,7 @@ const projectSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    createdByUserId: {
+    createdBy: {
         type: Schema.Types.ObjectId,
         required: true
     },
