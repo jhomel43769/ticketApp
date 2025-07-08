@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -25,6 +25,15 @@ const userSchema = new mongoose.Schema({
     lastName: {
         type: String,
         required: true
+    },
+    role: {
+        type: Schema.Types.ObjectId,
+        ref: 'role',
+        required: true
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     },
     createdAt:{
         type: Date,

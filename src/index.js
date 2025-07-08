@@ -3,6 +3,7 @@ import morgan from "morgan"
 import cors from "cors"
 import { connectDb } from "./config/db.js"
 import authRouter from "./routes/user.routes.js"
+import projectRouter  from "./routes/project.route.js"
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -13,7 +14,8 @@ app.use(cors())
 
 connectDb()
 
-app.use('/api', authRouter)
+app.use('/api/auth', authRouter)
+app.use('/api/project', projectRouter)
 
 app.listen(PORT, () => {
     console.log(`server running on port: ${PORT}`)

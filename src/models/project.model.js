@@ -1,10 +1,11 @@
-import mongoose, { model, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const projectSchema = new mongoose.Schema({
     name: {
         type: String,
         unique: true,
-        required: true
+        required: true,
+        trim: true
     },
     description: {
         type: String,
@@ -12,9 +13,10 @@ const projectSchema = new mongoose.Schema({
     },
     createdBy: {
         type: Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
-    leaders: {
+    leaderId: {
         type: String,
         ref: 'User'
     },
@@ -37,4 +39,5 @@ projectSchema.pre('save', function(next) {
     next()
 } )
 
-export const Project = mongoose.model('Project', projectSchema)
+const Project = mongoose.model('Project', projectSchema)
+export default Project;
