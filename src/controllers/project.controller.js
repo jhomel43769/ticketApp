@@ -1,5 +1,5 @@
 import  Project  from "../models/project.model.js";
-import  User  from "../models/project.model.js"
+import  User  from "../models/user.model.js"
 
 export const createProject = async (req, res) => {
     try {
@@ -12,6 +12,10 @@ export const createProject = async (req, res) => {
 
         if (exisitingProject) {
             return res.status(400).json({error: "El proyecto que intenta crear ya existe"})
+        }
+
+        if (User.roles.name !== 'project:create'){
+            return res.status(403).json({error: "no tienes los permisos para crear proyectos"})
         }
 
         let leader = null;

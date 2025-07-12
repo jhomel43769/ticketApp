@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: Schema.Types.ObjectId,
-        ref: 'role',
+        ref: 'Roles',
         required: true
     },
     isActive: {

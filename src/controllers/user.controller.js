@@ -1,15 +1,27 @@
 import  User  from '../models/user.model.js'
+import Roles from '../models/roles.model.js';
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken"
 
 export const register = async (req, res) => {
     try {
-        const {username, email, password_hash, firstName, lastName, createdAt, updatedAt} = req.body
+        const {username, email, password_hash, firstName, lastName, role:roleName, createdAt, updatedAt} = req.body
         const existingUser = await User.findOne({email: email})
 
         if (existingUser) {
             return res.status(400).json({error: "el email que intenta registrar ya existe"})
         }
+
+        if (!roleName) {
+            return res.status(400).json({error: "Rol invalido"})
+        }
+
+        const roleDoc = await Roles.findById(roleName)
+        if (!roleDoc) {
+            return res.status(400).json({error: 'rol no encontrado'})
+        }
+
+
 
         const salt = await bcrypt.genSalt(10)
         console.log("sal generado:", salt)
@@ -20,6 +32,7 @@ export const register = async (req, res) => {
             password_hash: hash,
             firstName,
             lastName,
+            role: roleDoc._id,
             createdAt,
             updatedAt
         });
