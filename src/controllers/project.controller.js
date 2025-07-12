@@ -1,49 +1,65 @@
-import  Project  from "../models/project.model.js";
-import  User  from "../models/user.model.js"
+import Project from "../models/project.model.js";
+import User from "../models/user.model.js";
 
 export const createProject = async (req, res) => {
     try {
-        const {name, description, leaderId,  status} = req.body
-        const exisitingProject = await Project.findOne({name: name})
+        const { name, description, leaderId, status } = req.body;
 
         if (!name || !description) {
-            return res.status(400).json({message: "Tanto el nombre como la descripcion son campos requeridos"})
+            return res.status(400).json({
+                message: "Tanto el nombre como la descripción son campos requeridos"
+            });
         }
 
-        if (exisitingProject) {
-            return res.status(400).json({error: "El proyecto que intenta crear ya existe"})
+        const existingProject = await Project.findOne({ name: name });
+        if (existingProject) {
+            return res.status(400).json({
+                error: "El proyecto que intenta crear ya existe"
+            });
         }
 
-        if (User.roles.name !== 'project:create'){
-            return res.status(403).json({error: "no tienes los permisos para crear proyectos"})
+        const currentUser = await User.findById(req.userId).populate('role');
+        if (!currentUser) {
+            return res.status(401).json({
+                error: "Usuario no encontrado"
+            });
+        }
+
+        const hasPermission = currentUser.role.Permissions.includes('project:create');
+        if (!hasPermission) {
+            return res.status(403).json({
+                error: "No tienes los permisos para crear proyectos"
+            });
         }
 
         let leader = null;
         if (leaderId) {
-            leader = await User.findOne({leaderId})
-        }
-        
-        
-        if (!leader) {
-            return res.status(400).json({error: "el lider espesificado no existe"})
+            leader = await User.findById(leaderId);
+            if (!leader) {
+                return res.status(400).json({
+                    error: "El líder especificado no existe"
+                });
+            }
         }
 
-        const createProject = Project.create({
+        const newProject = await Project.create({
             name,
             description,
-            createdBy: req.User.id, 
-            leader: leader ? leader._id: null,
-            status: status || 'activo'
+            createdBy: req.userId,
+            leaderId: leader ? leader._id : null,
+            status: status || 'activado'
         });
-
 
         res.status(201).json({
             success: true,
-            message: "proyecto creado con exito",
-            data: createProject
+            message: "Proyecto creado con éxito",
+            data: newProject
         });
+
     } catch (error) {
-        console.error("error al crear el proyecto", error )
-        return res.status(500).json("error interno del servidor al crear un projecto")
+        console.error("Error al crear el proyecto:", error);
+        return res.status(500).json({
+            error: "Error interno del servidor al crear un proyecto"
+        });
     }
-}
+};

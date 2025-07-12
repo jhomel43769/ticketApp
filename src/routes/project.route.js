@@ -1,8 +1,9 @@
-import express from "express"
-import { createProject } from "../controllers/project.controller.js"
+import express from "express";
+import { createProject } from "../controllers/project.controller.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
-const projectRouter = express.Router()
+const projectRouter = express.Router();
 
-projectRouter.post('/create', createProject)
+projectRouter.post('/create', authMiddleware, createProject);
 
 export default projectRouter;

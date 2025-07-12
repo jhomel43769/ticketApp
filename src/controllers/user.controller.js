@@ -1,24 +1,24 @@
-import  User  from '../models/user.model.js'
+import User from '../models/user.model.js'
 import Roles from '../models/roles.model.js';
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken"
 
 export const register = async (req, res) => {
     try {
-        const {username, email, password_hash, firstName, lastName, role:roleName, createdAt, updatedAt} = req.body
-        const existingUser = await User.findOne({email: email})
+        const { username, email, password_hash, firstName, lastName, role: roleName, createdAt, updatedAt } = req.body
+        const existingUser = await User.findOne({ email: email })
 
         if (existingUser) {
-            return res.status(400).json({error: "el email que intenta registrar ya existe"})
+            return res.status(400).json({ error: "el email que intenta registrar ya existe" })
         }
 
         if (!roleName) {
-            return res.status(400).json({error: "Rol invalido"})
+            return res.status(400).json({ error: "Rol invalido" })
         }
 
         const roleDoc = await Roles.findById(roleName)
         if (!roleDoc) {
-            return res.status(400).json({error: 'rol no encontrado'})
+            return res.status(400).json({ error: 'rol no encontrado' })
         }
 
 
@@ -38,42 +38,42 @@ export const register = async (req, res) => {
         });
 
         await user.save();
-    
+
         const userResponse = user.toObject();
         delete userResponse.password_hash
 
-        return res.status(201).json({message: "usuario creado con exito"})
+        return res.status(201).json({ message: "usuario creado con exito" })
     } catch (error) {
         console.error("error al registrar un usuario", error)
-        return res.status(500).json({error: "error interno del servidor al intentar registrar un usuario"})
+        return res.status(500).json({ error: "error interno del servidor al intentar registrar un usuario" })
     }
 };
 
 export const login = async (req, res) => {
     try {
-        const {email, password_hash} = req.body
+        const { email, password_hash } = req.body
         if (!email || !password_hash) {
-            return res.status(400).json({error: "Ambos campos son requeridos"})
+            return res.status(400).json({ error: "Ambos campos son requeridos" })
         }
         const user = await User.findOne({ email })
         if (!user) {
-            return res.status(400).json({error: "credenciales invalidas"})
+            return res.status(400).json({ error: "credenciales invalidas" })
         }
-        const isMatch = await bcrypt.compare(password_hash, user.password_hash )
+        const isMatch = await bcrypt.compare(password_hash, user.password_hash)
         if (!isMatch) {
-            return res.status(400).json({error: "contraseña incorrecta"})
+            return res.status(400).json({ error: "contraseña incorrecta" })
         }
-        const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET,{
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1h"
         })
 
         const userResponse = user.toObject()
         delete userResponse.password_hash
 
-        res.status(201).json({message: "session inciada con exito"}, token, {user: userResponse})
+        res.status(201).json({ message: "session inciada con exito", token: token, user: userResponse })
     } catch (error) {
         console.error("error al iniciar sesion", error)
-        return res.status(500).json({error: "error interno del servidor al iniciar sesion"})
+        return res.status(500).json({ error: "error interno del servidor al iniciar sesion" })
     }
 };
 
@@ -81,28 +81,28 @@ export const getProfiles = async (req, res) => {
     try {
         const users = await User.find({})
 
-        if(!users) {
-            return res.status(400).json({error: "no se encuentran usuarios"})
+        if (!users) {
+            return res.status(400).json({ error: "no se encuentran usuarios" })
         }
 
-        res.status(200).json({users})
+        res.status(200).json({ users })
     } catch (error) {
         console.error("error al obtener los usuarios", error)
-        return res.status(500).json({error: "error interno del servidor al obtener los usuarios"})
+        return res.status(500).json({ error: "error interno del servidor al obtener los usuarios" })
     }
 };
 
 export const getProfileById = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const user = await User.findById(id)
 
-        if(!user) {
-            return res.status(400).json({error: "el usuario que intenta buscar no existe"})
+        if (!user) {
+            return res.status(400).json({ error: "el usuario que intenta buscar no existe" })
         }
-        res.status(200).json({user})
+        res.status(200).json({ user })
     } catch (error) {
         console.error("error al ontener el usuario", error)
-        return res.status(500).json({error: "error interno del servidor al obtejer el usuario"})
+        return res.status(500).json({ error: "error interno del servidor al obtejer el usuario" })
     }
 }
