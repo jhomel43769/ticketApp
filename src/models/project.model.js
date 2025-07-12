@@ -18,9 +18,9 @@ const projectSchema = new mongoose.Schema({
     },
     leaderId: {
         type: String,
-        ref: 'User'
+        ref: 'User' 
     },
-        createdAt:{
+    createdAt: {
         type: Date,
         default: Date.now
     },
