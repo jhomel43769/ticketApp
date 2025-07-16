@@ -53,3 +53,13 @@ export const createIssue = async (req, res) => {
         return res.status(500).json({error: "error interno del servidor al crear una issue"})
     }
 }
+
+export const getIssues = async (req, res) => {
+    try {
+        const issues = await Issue.find().populate("project").populate("assignedTo").populate("reportedBy");
+        res.status(200).json({ issues });
+    } catch (error) {
+        console.error("error al obtener las issues", error);
+        return res.status(500).json({ error: "error interno del servidor al obtener las issues" });
+    }
+}
