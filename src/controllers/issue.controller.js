@@ -24,7 +24,7 @@ export const createIssue = async (req, res) => {
             return res.status(400).json({error: "la issue que intentas crear ya existe"})
         }
 
-        const reportedUser = await User.findById(assignedTo)
+        const reportedUser = await User.findById(reportedBy)
         if (!reportedUser) {
             return res.status(400).json({error: "el usuario que reporta la issue no existe"})
         }
@@ -42,7 +42,7 @@ export const createIssue = async (req, res) => {
             project: existingProject._id,
             dueDate,
             reportedBy: reportedBy,
-            assignedTo: assignedTo ? reportedUser._id: null, 
+            assignedTo: assignedTo ? assignedUser._id: null, 
             code
         }
         const createIssue = await Issue.create(newIssueData)
