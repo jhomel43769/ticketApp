@@ -21,8 +21,6 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: 'rol no encontrado' })
         }
 
-
-
         const salt = await bcrypt.genSalt(10)
         console.log("sal generado:", salt)
         const hash = await bcrypt.hash(password_hash, salt);
@@ -79,7 +77,7 @@ export const login = async (req, res) => {
 
 export const getProfiles = async (req, res) => {
     try {
-        const users = await User.find({})
+        const users = await User.find({}).populate('role')
 
         if (!users) {
             return res.status(400).json({ error: "no se encuentran usuarios" })
@@ -95,7 +93,7 @@ export const getProfiles = async (req, res) => {
 export const getProfileById = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id)
+        const user = await User.findById(id).populate('role')
 
         if (!user) {
             return res.status(400).json({ error: "el usuario que intenta buscar no existe" })

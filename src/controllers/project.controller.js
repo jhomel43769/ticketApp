@@ -25,7 +25,7 @@ export const createProject = async (req, res) => {
             });
         }
 
-        const hasPermission = currentUser.role.Permissions.includes('project:create');
+        const hasPermission = currentUser.role && currentUser.role.Permissions && currentUser.role.Permissions.includes('project:create');
         if (!hasPermission) {
             return res.status(403).json({
                 error: "No tienes los permisos para crear proyectos"
@@ -42,12 +42,12 @@ export const createProject = async (req, res) => {
             }
         }
 
-        const newProject = await Project.create({
+       const newProject = await Project.create({
             name,
             description,
             createdBy: req.userId,
-            leaderId: leader ? leader._id : null,
-            status: status || 'activado'
+            leader: leader ? leader._id : null, 
+            status: status || 'activado' 
         });
 
         res.status(201).json({
@@ -60,6 +60,21 @@ export const createProject = async (req, res) => {
         console.error("Error al crear el proyecto:", error);
         return res.status(500).json({
             error: "Error interno del servidor al crear un proyecto"
+        });
+    }
+};
+
+export const getProjects = async (req, res) => {
+    try {
+        const projects = await Project.find({})
+            .populate('createdBy')
+            .populate('leader' );
+        res.status(200).json({ success: true, data: projects });
+
+    } catch (error) {
+        console.error("Error al obtener proyectos:", error);
+        return res.status(500).json({
+            error: "Error interno del servidor al obtener proyectos."
         });
     }
 };

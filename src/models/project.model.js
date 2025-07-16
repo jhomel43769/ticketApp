@@ -16,8 +16,8 @@ const projectSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    leaderId: {
-        type: String,
+    leader: {
+        type: Schema.Types.ObjectId,
         ref: 'User' 
     },
     createdAt: {

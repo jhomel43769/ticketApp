@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose"; 
+import mongoose, { Schema } from "mongoose";
 
 const issueSchema = new mongoose.Schema({
     title: {
@@ -7,7 +7,8 @@ const issueSchema = new mongoose.Schema({
         trim: true
     },
     description: {
-        type: String
+        type: String,
+        required: true,
     },
     type: {
         type: String,
@@ -16,11 +17,24 @@ const issueSchema = new mongoose.Schema({
     },
     priority: {
         type: String,
-        enum: ['Por Hacer', 'En Progreso', 'En revisión', 'Terminada'],
-        default: 'Por Hacer'
+        enum: ['Baja', 'Media', 'Alta', 'Critica'],
+        default: 'Media',
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ['Por Hacer', 'En Progreso', 'En revisión', 'Terminada'], 
+        default: 'Por Hacer',
+        required: true 
+    },
+    code: {
+        type: String,
+        unique: true,
+        required: true
     },
     dueDate: {
-        type: Date
+        type: Date,
+        required: true
     },
 
     //---RELACIONES CON USUAIROS Y PROYECTOS---
@@ -37,35 +51,37 @@ const issueSchema = new mongoose.Schema({
     },
     assignedTo: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     //---Relacion embebida
     comments: [{
-        user: {type: Schema.Types.ObjectId, ref: 'User', required: true},
-        text: {type: String, required: true},
-        createdAt: {type: Date, default: Date.now}
+        user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        text: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now }
     }],
     //---archivos adjuntos
     fileName: [{
         fileName: String,
         fileUrl: String,
-        mimeType:String,
+        mimeType: String,
         uploadedBy: { type: Schema.Types.ObjectId, ref: 'User' },
-        uploadedAt: { type: Date, default: Date.now }    
+        uploadedAt: { type: Date, default: Date.now }
     }],
     createdAt: {
         type: Date,
         default: Date.now
-  },
+    },
     updatedAt: {
         type: Date,
         default: Date.now
-  }
+    }
 });
 
-issueSchema.pre('save', function(next) {
+issueSchema.pre('save', function (next) {
     this.updatedAt = Date.now();
     next()
 })
 
-export const Issue = mongoose.model('Issue', issueSchema)
+const Issue = mongoose.model('Issue', issueSchema)
+export default Issue
