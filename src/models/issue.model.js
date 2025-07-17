@@ -23,9 +23,9 @@ const issueSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Por Hacer', 'En Progreso', 'En revisión', 'Terminada'], 
+        enum: ['Por Hacer', 'En Progreso', 'En revisión', 'Terminada'],
         default: 'Por Hacer',
-        required: true 
+        required: true
     },
     code: {
         type: String,
@@ -36,8 +36,6 @@ const issueSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-
-    //---RELACIONES CON USUAIROS Y PROYECTOS---
 
     project: {
         type: Schema.Types.ObjectId,
@@ -54,18 +52,17 @@ const issueSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    //---Relacion embebida
     comments: [{
         user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         text: { type: String, required: true },
         createdAt: { type: Date, default: Date.now }
     }],
-    //---archivos adjuntos
-    fileName: [{
-        fileName: String,
-        fileUrl: String,
-        mimeType: String,
-        uploadedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    attachments: [{
+        fileName: { type: String, required: true },
+        fileUrl: { type: String, required: true },
+        mimeType: { type: String, required: true },
+        size: { type: Number, required: true },
+        uploadedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         uploadedAt: { type: Date, default: Date.now }
     }],
     createdAt: {
