@@ -1,14 +1,21 @@
 import Issue from "../models/issue.model.js";
 import Project from "../models/project.model.js"
 import User from "../models/user.model.js";
-import { generateCode } from "../services/genCode.services.js"
+import { generateCode } from "../services/genCodeServices.js";
 import { cloudinary } from "../config/cloudinary.config.js";
 
 export const createIssue = async (req, res) => {
     try {
-        const { title, description, type, priority, dueDate, project, assignedTo, status } = req.body;
-        console.log("req.body", req.body);
-        console.log("req.files", req.files);
+        const cleanData = {};
+        for (const [key, value] of Object.entries(req.body)) {
+            if (typeof value === 'string') {
+                cleanData[key] = value.trim(); 
+            } else {
+                cleanData[key] = value;
+            }
+        }
+        
+        const { title, description, type, priority, dueDate, project, assignedTo, status } = cleanData;
         const reportedBy = req.userId;
         const uploadedFiles = req.files;
 
@@ -45,19 +52,48 @@ export const createIssue = async (req, res) => {
         const attachmentsData = [];
         if (uploadedFiles && uploadedFiles.length > 0) {
             for (const file of uploadedFiles) {
-                const cloudinaryUploadResult = await cloudinary.uploader.upload(file.buffer.toString('base64'), {
-                    resource_type: "auto",
-                    folder: `ticketapp_issues/${project}`
-                });
-                attachmentsData.push({
-                    fileName: file.originalname,
-                    fileUrl: cloudinaryUploadResult.secure_url,
-                    mimeType: file.mimetype,
-                    size: file.size,
-                    uploadedBy: reportedBy,
-                    uploadedAt: new Date()
-                });
+                try {
+                    const cloudinaryUploadResult = await cloudinary.uploader.upload(
+                        `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
+                        {
+                            resource_type: "auto",
+                            folder: `ticketapp_issues/${project}`,
+                            public_id: `${Date.now()}_${file.originalname.split('.')[0]}`
+                        }
+                    );
+                    
+                    attachmentsData.push({
+                        fileName: file.originalname,
+                        fileUrl: cloudinaryUploadResult.secure_url,
+                        mimeType: file.mimetype,
+                        size: file.size,
+                        uploadedBy: reportedBy,
+                        uploadedAt: new Date()
+                    });
+                } catch (uploadError) {
+                    console.error("Error uploading file to Cloudinary:", uploadError);
+                    throw new Error(`Error al subir el archivo ${file.originalname}: ${uploadError.message}`);
+                }
             }
+        }
+
+        let cleanDueDate = null;
+        if (dueDate) {
+            const dateStr = dueDate.trim();
+            if (dateStr) {
+                cleanDueDate = new Date(dateStr);
+                if (isNaN(cleanDueDate.getTime())) {
+                    return res.status(400).json({ error: "Formato de fecha inválido para dueDate." });
+                }
+            }
+        }
+
+        const validStatuses = ['Por Hacer', 'En Progreso', 'En revisión', 'Terminada'];
+        const cleanStatus = status ? status.trim() : 'Por Hacer';
+        if (!validStatuses.includes(cleanStatus)) {
+            return res.status(400).json({ 
+                error: `Status inválido. Debe ser uno de: ${validStatuses.join(', ')}` 
+            });
         }
 
         const newIssueData = {
@@ -65,8 +101,8 @@ export const createIssue = async (req, res) => {
             description,
             type,
             priority,
-            status: status || 'Por Hacer',
-            dueDate: dueDate || null,
+            status: cleanStatus,
+            dueDate: cleanDueDate,
             project: existingProject._id,
             reportedBy: reportedBy,
             assignedTo: assignedUserId,
