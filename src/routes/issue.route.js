@@ -6,7 +6,7 @@ import { sanitizeRequestBody } from "../middlewares/sanitizeMiddleware.js";
 
 const issueRouter = express.Router();
 
-issueRouter.post('/create', authMiddleware, upload.array('attachments', 5), sanitizeRequestBody, createIssue);
+issueRouter.post('/create', authMiddleware, upload.array('files', 5), sanitizeRequestBody, createIssue);
 issueRouter.get('/showissues', authMiddleware, getIssues);
 issueRouter.get('/showissues/:id', authMiddleware, getIssueById);   
 

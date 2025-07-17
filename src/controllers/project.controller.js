@@ -85,7 +85,6 @@ export const getProjectById = async (req, res) => {
         const project = await Project.findById(projectId)
             .populate('createdBy')
             .populate('leader')
-            .populate('issues');
         if (!project) {
             return res.status(404).json({
                 error: "Proyecto no encontrado"

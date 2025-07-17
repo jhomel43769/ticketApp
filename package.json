@@ -1,6 +1,6 @@
 {
   "name": "ticketapp",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "description": "Aplicación de gestion de tareas por ticketes ",
   "main": "src/index.js",
   "type": "module",
