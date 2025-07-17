@@ -2,6 +2,7 @@ import User from '../models/user.model.js'
 import Roles from '../models/roles.model.js';
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken"
+import { seendEmail } from '../services/seendEmail.js';
 
 export const register = async (req, res) => {
     try {
@@ -21,6 +22,10 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: 'rol no encontrado' })
         }
 
+        if (!username, !email, !password_hash, !firstName, !lastName, !roleName) {
+            return res.status(400).json({error: "los campos: <username> <email> <password_hash> <firstName> <lastName> <roleName> Son requeridos"})
+        }
+
         const salt = await bcrypt.genSalt(10)
         console.log("sal generado:", salt)
         const hash = await bcrypt.hash(password_hash, salt);
@@ -37,10 +42,18 @@ export const register = async (req, res) => {
 
         await user.save();
 
+        seendEmail(email, username).then(success => {
+            if (success) {
+                console.log("email de registro enviado cn exito")
+            } else {
+                console.warn('fallo al enfiar el email de registro')
+            } 
+        });
+
         const userResponse = user.toObject();
         delete userResponse.password_hash
 
-        return res.status(201).json({ message: "usuario creado con exito" })
+        return res.status(201).json({ message: "usuario creado con exito"})
     } catch (error) {
         console.error("error al registrar un usuario", error)
         return res.status(500).json({ error: "error interno del servidor al intentar registrar un usuario" })
