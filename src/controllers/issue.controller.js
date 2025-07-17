@@ -147,4 +147,21 @@ export const getIssues = async (req, res) => {
         console.error("error al obtener las issues", error);
         return res.status(500).json({ error: "error interno del servidor al obtener las issues" });
     }
-}
+};
+
+export const getIssueById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const issue = await Issue.findById(id)
+            .populate("project")
+            .populate("assignedTo")
+            .populate("reportedBy");
+        if (!issue) {
+            return res.status(404).json({ message: "Issue no encontrada." });
+        }
+        res.status(200).json({ issue });
+    } catch (error) {       
+        console.error("error al obtener la issue por ID", error);
+        return res.status(500).json({ error: "Error interno del servidor al obtener la issue por ID." });
+    }
+};
