@@ -1,4 +1,4 @@
-import swaggerJSDoc from "swagger-jsdoc.js";
+import swaggerJSDoc from "swagger-jsdoc";
 
 const swaggerDefinition = {
   openapi: "3.0.0",
@@ -6,6 +6,10 @@ const swaggerDefinition = {
     title: "TicketApp API",
     version: "1.0.0",
     description: "API documentation for TicketApp",
+    contact: {
+      name: "Jhomel Medina",
+      email: "jhomelmedina2@gmail.com",
+    },
   },
   servers: [
     {
@@ -17,7 +21,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ["./src/routes/*.js"],
+  apis: ['./src/routes/*.js'],
 };
 
 const swaggerSpec = swaggerJSDoc(options);
